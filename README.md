@@ -19,3 +19,4 @@ Sample input is in /ms3-contact-management-sys-api/src/test/resources/contact-ma
 
 Postman collection: https://www.getpostman.com/collections/89eebf1042d111a26826
 
+The code considers Communication as an object instead of array, but can extended to array like addess.
