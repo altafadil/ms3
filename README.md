@@ -10,6 +10,7 @@ Decrypt password using provided encryption.key, use AES and CBC.
 
 For accessing API:
 client_id = 01c51bcdcf3841fb9a17c39724db27cc
+
 client_secret = 77852f35e53d4903aeBd25c5D042d44b
 
 App URL: ms3-contact-management-sys-api.us-e2.cloudhub.io/api/contact
