@@ -1,0 +1,188 @@
+#%RAML 1.0
+title: Contact Management
+description: This API is used to manage contact information
+mediaType:
+  - application/json
+version: 1.0.0
+protocols:
+  - HTTPS
+types:
+  contact: !include dataTypes/contact.raml
+  communication: !include dataTypes/communication.raml
+  address: !include dataTypes/address.raml
+  identification: !include dataTypes/identification.raml
+
+securitySchemes:
+  basic:
+    description: 
+      This API supports Basic Authentication.
+    type: Basic Authentication
+securedBy: 
+  - basic
+
+################## Contact Information ###################
+/contact:
+  description: Contact consists of Identification, atleast one address, and communication details. 
+  get:
+    description: Get contact details
+    queryParameters:
+      contactId:
+        type: integer
+        example: 123
+    responses:
+      200:
+        body:
+          type: contact
+  post:
+    description: Insert or update contact details. For update, provide contact ID.
+    body:
+      type: contact
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml
+  delete:
+    description: Delete contact detail by contact ID
+    queryParameters:
+      contactId: 
+        required: true
+        type: integer
+        example: 123
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml
+
+################## Address Information ###################
+/address:
+  get:
+    description: Get address by adress ID or multiple addresses for analytics purposes
+    queryParameters:
+      contactId:
+        type: integer
+        example: 123
+        required: false
+      addressId:
+        type: integer
+        example: 456
+        required: false
+      limit:
+        description: Number of records to return
+        example: 100
+        type: integer
+        required: false
+      offset:
+        description: Starting value of address ID
+        type: integer
+        example: 1000
+        required: false
+      sort:
+        description: Sort results
+        enum:
+          - asc
+          - desc
+        required: false          
+    responses:
+      200:
+        body:
+          type: address
+  post:
+    description: Insert or update addresses
+    body:
+      type: array
+      items:
+        type: address
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml
+  delete:
+    description: Delete address by address ID. Atleast one address must be associated with a contact.
+    queryParameters:
+      addressId:
+        type: integer
+        required: true
+        example: 123
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml
+      422:
+        body:
+          example: !include examples/failureExample.raml
+
+################## Contact Communications ###################
+/communication:
+  description: Communication details of a contact. This information cannot be deleted
+  get:
+    description: Get communication details of a contact or multiple communication details for analyics purposes
+    queryParameters:
+      contactId:
+        type: integer
+        example: 123
+        required: false
+      limit:
+        description: Number of records to return
+        example: 100
+        type: integer
+        required: false
+      offset:
+        description: Starting value of address ID
+        type: integer
+        example: 1000
+        required: false
+      sort:
+        description: Sort results
+        enum:
+          - asc
+          - desc
+        required: false   
+    responses:
+      200:
+        body:
+          type: communication
+  post:
+    body:
+      type: communication
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml
+            
+################## Contact Identification ###################
+/identification:
+  description: Identification of a contact. This information cannot be deleted.
+  get:
+    description: Get identification details of a contact or multiple records for analyics purposes
+    queryParameters:
+      contactId:
+        type: integer
+        example: 123
+        required: false
+      limit:
+        description: Number of records to return
+        example: 100
+        type: integer
+        required: false
+      offset:
+        description: Starting value of address ID
+        type: integer
+        example: 1000
+        required: false
+      sort:
+        description: Sort results
+        enum:
+          - asc
+          - desc
+        required: false   
+    responses:
+      200:
+        body:
+          type: identification
+  post:
+    body:
+      type: identification
+    responses:
+      200:
+        body:
+          example: !include examples/successExample.raml

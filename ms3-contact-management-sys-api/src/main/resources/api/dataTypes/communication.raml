@@ -1,0 +1,25 @@
+#%RAML 1.0 DataType
+usage: employee communication
+example: !include ../examples/communicationExample.raml
+type: object
+properties:
+  contactId:
+    description: Associated Contact ID of communication details
+    type: integer
+    required: false
+  communicationType:
+    description: Type of communication
+    required: true
+    enum:
+      - email
+      - phone
+      - fax
+  communicationValue:
+    description: Value
+    type: string
+    required: true
+  isPreffered: 
+    required: true
+    type: boolean
+    description: Is this preffred method of communication?
+

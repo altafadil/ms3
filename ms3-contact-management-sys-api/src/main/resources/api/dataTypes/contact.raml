@@ -1,0 +1,12 @@
+#%RAML 1.0 DataType
+usage: Contact consisting of identification, address and communication
+properties:
+  Identification:
+    type: !include identification.raml
+  Address:
+    type: array
+    items:
+      type: !include address.raml
+  Communication:
+    type: !include communication.raml
+

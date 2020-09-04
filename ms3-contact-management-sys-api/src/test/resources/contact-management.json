@@ -1,0 +1,29 @@
+{
+  "Identification": {
+    "contactId": 123,
+    "firstName": "John",
+    "lastName": "Smith",
+    "dob": "1986-12-30",
+    "gender": "Male",
+    "title": "Engineer"
+  },
+  "Address": [
+    {
+      "contactId": 0,
+      "addressId": 0,
+      "addressType": "home",
+      "number": "1234",
+      "street": "123 main street",
+      "unit": "",
+      "city": "atlanta",
+      "state": "NV",
+      "zipCode": "60897"
+    }
+  ],
+  "Communication": {
+    "contactId": 123,
+    "communicationType": "email",
+    "communicationValue": "email123@gmail.com",
+    "isPreffered": true
+  }
+}

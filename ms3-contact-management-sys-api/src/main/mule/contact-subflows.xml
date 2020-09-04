@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="insert-update-contact-subflow" doc:id="78c4b2bf-940d-425a-8891-a767c408508d" >
+		<try doc:name="try" doc:id="3d9d7aba-8d63-4caf-9290-c032806a5920">
+			<ee:transform doc:name="create-contact-input" doc:id="a5c8f1f9-a813-4ad2-8440-3797894652dc">
+			<ee:message>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="contactInput" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	'communicationType': payload.Communication.communicationType,
+	'communicationValue': payload.Communication.communicationValue,
+	'isPreffered': if(payload.Communication.isPreffered=='true') 'Y' else 'N',
+	'contactId': payload.Identification.contactId,
+	'firstName': payload.Identification.firstName,
+	'lastName': payload.Identification.lastName,
+	'dob': payload.Identification.dob,
+	'gender': payload.Identification.gender,
+	'title': payload.Identification.title
+}]]></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+			<db:stored-procedure doc:name="exec-sp-contact" doc:id="3921a325-3ea6-4f15-850b-f34530554b79" config-ref="Database_Config" target="contactOutput">
+			<db:sql><![CDATA[${sp.contact} ]]></db:sql>
+			<db:input-parameters><![CDATA[#[vars.contactInput]]]></db:input-parameters>
+			<db:output-parameters>
+				<db:output-parameter key="contactIdOut" type="BIGINT" />
+			</db:output-parameters>
+		</db:stored-procedure>
+			<set-variable value="#[vars.contactOutput.contactIdOut]" doc:name="set-contactId" doc:id="f6b3c080-9433-4417-9614-f5800317bbfa" variableName="contactId" />
+			<foreach doc:name="For Each" doc:id="b2cedad0-2323-4a8c-bc14-e8755258f2b3" collection="#[payload.Address]">
+				<ee:transform doc:name="create-address-input" doc:id="f817375a-cf4b-43ed-9db6-387951a948b0">
+				<ee:message>
+				</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="addressInput" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	'contactId' : vars.contactId, 
+	'addressId' : payload.addressId,
+	'addressType' : payload.addressType,
+	'addressNumber' : payload.number,
+	'street' : payload.street,
+	'unit' : payload.unit,
+	'city' : payload.city,
+	'state' : payload.state,
+	'zipcode' : payload.zipCode
+}]]></ee:set-variable>
+					</ee:variables>
+			</ee:transform>
+			<db:stored-procedure doc:name="Stored procedure" doc:id="6cdf5043-0cce-4f73-9d0a-4a465d5577a1" config-ref="Database_Config">
+				<db:sql><![CDATA[${sp.address}]]></db:sql>
+				<db:input-parameters><![CDATA[#[vars.addressInput]]]></db:input-parameters>
+			</db:stored-procedure>
+		</foreach>
+			<ee:transform doc:name="set-response" doc:id="41c2052e-9845-443e-b945-3a017f4f0f83" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Success",
+	id: vars.contactId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="689b1221-9fde-48f0-bb59-a23824f838df" >
+					<ee:transform doc:name="set-response" doc:id="f123789a-d679-4d54-8a7a-10436d37584c" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	id: null
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+	</sub-flow>
+</mule>

@@ -1,0 +1,32 @@
+#%RAML 1.0 DataType
+usage: employee details
+type: object
+example: !include ../examples/identificationExample.raml
+properties: 
+  contactId:
+    description: Employee ID
+    required: false
+    type: integer
+  firstName:
+    description: First Name
+    type: string
+    required: true
+  lastName:
+    description: Last Name
+    type: string
+    required: true
+  dob:
+    type: date-only
+    description: Date of birth
+    required: true
+  gender:
+    required: true
+    description: Gender
+    enum:
+      - Male
+      - Female
+      - Unknown
+  title:
+    required: true
+    description: Employee title
+    type: string
